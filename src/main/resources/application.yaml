@@ -1,0 +1,22 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: jdbi-example
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/exampledb
+    username: postgres
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+    contexts: dev
+    change-log: classpath:/db/changelog/changelog-root.xml
+    drop-first: false
+
+
+
