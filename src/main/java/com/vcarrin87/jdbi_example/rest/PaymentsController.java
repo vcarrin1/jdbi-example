@@ -20,7 +20,12 @@ public class PaymentsController {
     @Autowired
     private PaymentsService paymentsService;
 
-    @GetMapping("/")
+    /*
+     * This method is used to get all payments.
+     * Example of a GET request:
+     /payments/all-payments
+     */
+    @GetMapping("/all-payments")
     public List<Payments> getAllPayments() {
         return paymentsService.getAllPayments();
     }

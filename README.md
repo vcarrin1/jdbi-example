@@ -17,6 +17,11 @@ To access Swagger UI:
 3. Navigate to the Swagger UI URL, typically in the format: `http://<server_address>:8090/swagger-ui/index.html`.
 4. Use the interface to explore available API endpoints, view request/response schemas, and test API calls.
 
+![swagger-ui](src/main/resources/static/swagger-ui.png)
+
+### Database ER Diagram
+![er-diagram](src/main/resources/static/er-diagram.png)
+
 ## Testing
 ### Run all tests
 ```bash

@@ -2,7 +2,6 @@ package com.vcarrin87.jdbi_example.config;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
-import org.jdbi.v3.core.result.RowView;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -60,13 +59,12 @@ public class DatasourceConfig {
                     ? new java.sql.Timestamp(rs.getTimestamp(columnNumber).getTime()) 
                     : null
             )
-            .registerRowMapper(RowView.class, (rs, ctx) -> ctx.findColumnMapperFor(RowView.class))
-            .registerRowMapper(ConstructorMapper.factory(Customer.class))
-            .registerRowMapper(ConstructorMapper.factory(Products.class))
-            .registerRowMapper(ConstructorMapper.factory(Payments.class))
-            .registerRowMapper(ConstructorMapper.factory(Orders.class))
-            .registerRowMapper(ConstructorMapper.factory(OrderItems.class))
-            .registerRowMapper(ConstructorMapper.factory(Inventory.class));
+            .registerRowMapper(ConstructorMapper.factory(Customer.class, "c"))
+            .registerRowMapper(ConstructorMapper.factory(Products.class, "p"))
+            .registerRowMapper(ConstructorMapper.factory(Payments.class, "pay"))
+            .registerRowMapper(ConstructorMapper.factory(Orders.class, "o"))
+            .registerRowMapper(ConstructorMapper.factory(OrderItems.class, "oi"))
+            .registerRowMapper(ConstructorMapper.factory(Inventory.class, "i"));
     }
 
 }

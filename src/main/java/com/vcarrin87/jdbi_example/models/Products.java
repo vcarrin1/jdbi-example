@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Products {
     
     @JdbiConstructor
-    public Products(int productId, String name, String description, double price) {
+    public Products(int productId, String name, String description, Double price) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -25,5 +25,5 @@ public class Products {
     @Nullable
     private String description;
 
-    private double price;
+    private Double price;
 }

@@ -1,6 +1,8 @@
 package com.vcarrin87.jdbi_example.services;
 
 import org.springframework.stereotype.Service;
+
+import com.vcarrin87.jdbi_example.constants.SqlConstants;
 import com.vcarrin87.jdbi_example.dao.CustomerWithOrdersDao;
 import com.vcarrin87.jdbi_example.models.Customer;
 import com.vcarrin87.jdbi_example.models.Orders;
@@ -22,20 +24,14 @@ public class CustomerService {
     @Autowired
     private Jdbi jdbi;
 
-    public List<Customer> getAllCustomers() {
-        String sql = "SELECT * FROM customers";
-        return jdbi.withHandle(handle -> 
-            handle.createQuery(sql)
-                  .mapTo(Customer.class)
-                  .list()
-        );
-    }
-
+    /**
+     * This method creates a new customer.
+     * @param customer The customer to create.
+     */
     public void createCustomer(Customer customer) {
         System.out.println("Creating customer: " + customer);
-        String sql = "INSERT INTO customers (name, email, address) VALUES (:name, :email, :address)";
         jdbi.useHandle(handle -> 
-            handle.createUpdate(sql)
+            handle.createUpdate(SqlConstants.INSERT_CUSTOMER)
                   .bind("name", customer.getName())
                   .bind("email", customer.getEmail())
                   .bind("address", customer.getAddress())
@@ -46,6 +42,50 @@ public class CustomerService {
         );
     }
 
+    /**
+     * This method retrieves a customer by its ID.
+     * @param id The ID of the customer to retrieve.
+     * @return The customer with the specified ID, or null if not found.
+     */
+    public Customer getCustomerById(int id) {
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(SqlConstants.SELECT_CUSTOMER_BY_ID)
+                  .bind("customer_id", id)
+                  .mapTo(Customer.class)
+                  .findFirst()
+                  .orElse(null)
+        );
+    }
+
+    /**
+     * This method deletes a customer by its ID.
+     * @param customerId The ID of the customer to delete.
+     */
+    public void deleteCustomer(int customerId) {
+        jdbi.useHandle(handle ->
+            handle.createUpdate(SqlConstants.DELETE_CUSTOMER_BY_ID)
+                  .bind("customer_id", customerId)
+                  .execute()
+        );
+    }
+
+    /**
+     * This method retrieves all customers.
+     * @return List of all Customers.
+     */
+    public List<Customer> getAllCustomers() {
+        return jdbi.withHandle(handle -> 
+            handle.createQuery(SqlConstants.SELECT_ALL_CUSTOMERS)
+                  .mapTo(Customer.class)
+                  .list()
+        );
+    }
+
+    /**
+     * This method retrieves all customers with their orders.
+     * @param customerId The ID of the customer to retrieve.
+     * @return List of Customers with their Orders.
+     */
     public List<Customer> getCustomersWithOrders(int customerId) {
         Multimap<Customer, Orders> joined = HashMultimap.create();
 
@@ -63,6 +103,11 @@ public class CustomerService {
             .toList();
     }
 
+    /**
+     * This method retrieves a customer with their orders and payments.
+     * @param customerId The ID of the customer to retrieve.
+     * @return The Customer object containing the customer, orders, and payments data.
+     */
     public Customer getCustomersWithOrdersAndPayments(int customerId) {
         return jdbi.onDemand(CustomerWithOrdersDao.class)
                 .getCustomerWithOrdersAndPayments(customerId);

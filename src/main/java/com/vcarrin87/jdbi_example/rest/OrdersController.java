@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,13 +43,55 @@ public class OrdersController {
         }
     }
 
+    /*
+     * This method is used to get all orders.
+     * Example of a GET request:
+     /orders/all-orders
+     */
     @GetMapping("/all-orders")
     public List<Orders> getAllOrders() {
         return ordersService.getAllOrders();
     }
 
+    /*
+     * This method is used to get all order items.
+     * Example of a GET request:
+     /orders/order-items
+     */
     @GetMapping("/order-items")
     public List<OrderItems> getOrderItems() {
         return ordersService.getOrderItems();
+    }
+
+    /*
+     * This method is used to get an order by its ID.
+     * Example of a GET request:
+     /orders/1
+     */
+    @PostMapping("/update-order")
+    public ResponseEntity<?> updateOrder(@RequestBody Orders order) {
+        try {
+            ordersService.updateOrder(order);
+            return ResponseEntity.ok("Order updated successfully");
+        } catch (Exception e) {
+            System.out.println("Error updating order: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error updating order: " + e.getMessage());
+        }
+    }
+
+    /*
+     * This method is used to delete an order by its ID.
+     * Example of a DELETE request:
+     /orders/delete-order/1
+     */
+    @DeleteMapping("/delete-order/{orderId}")
+    public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
+        try {
+            ordersService.deleteOrder(orderId);
+            return ResponseEntity.ok("Order deleted successfully");
+        } catch (Exception e) {
+            System.out.println("Error deleting order: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error deleting order: " + e.getMessage());
+        }
     }
 }
