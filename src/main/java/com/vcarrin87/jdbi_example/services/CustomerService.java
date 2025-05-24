@@ -15,6 +15,7 @@ import com.google.common.collect.Multimap;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
@@ -58,16 +59,51 @@ public class CustomerService {
     }
 
     /**
-     * This method deletes a customer by its ID.
-     * @param customerId The ID of the customer to delete.
+     * This method updates a customer.
+     * @param customer The customer to update.
      */
-    public void deleteCustomer(int customerId) {
-        jdbi.useHandle(handle ->
-            handle.createUpdate(SqlConstants.DELETE_CUSTOMER_BY_ID)
-                  .bind("customer_id", customerId)
+    public void updateCustomer(Customer customer) {
+        System.out.println("Updating customer: " + customer);
+        jdbi.useHandle(handle -> 
+            handle.createUpdate(SqlConstants.UPDATE_CUSTOMER)
+                  .bind("customer_id", customer.getCustomerId())
+                  .bind("name", customer.getName())
+                  .bind("email", customer.getEmail())
+                  .bind("address", customer.getAddress())
                   .execute()
         );
     }
+
+    /**
+     * This method deletes a customer with orders and payments.
+     * useTransaction() automatically handles commit/rollback
+     * Any exception triggers full rollback
+     * @param customerId The customer id to delete.
+     */
+    public void deleteCustomer(int customerId) {
+        jdbi.useTransaction(handle -> {
+            // 1. Delete payments first (deepest dependency)
+            handle.createUpdate("DELETE FROM payments WHERE order_id IN " +
+                "(SELECT order_id FROM orders WHERE customer_id = :customer_id)")
+                .bind("customer_id", customerId)
+                .execute();
+
+            // 2. Delete orders
+            handle.createUpdate("DELETE FROM orders WHERE customer_id = :customer_id")
+                .bind("customer_id", customerId)
+                .execute();
+
+            // 3. Finally delete customer
+            int rowsDeleted = handle.createUpdate("DELETE FROM customers WHERE customer_id = :customer_id")
+                .bind("customer_id", customerId)
+                .execute();
+
+            if (rowsDeleted == 0) {
+                throw new IllegalStateException("Customer not found, rolling back");
+            }
+        });
+    }
+
 
     /**
      * This method retrieves all customers.
@@ -76,8 +112,8 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return jdbi.withHandle(handle -> 
             handle.createQuery(SqlConstants.SELECT_ALL_CUSTOMERS)
-                  .mapTo(Customer.class)
-                  .list()
+                .mapTo(Customer.class)
+                .list()
         );
     }
 

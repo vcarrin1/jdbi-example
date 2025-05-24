@@ -3,10 +3,12 @@ package com.vcarrin87.jdbi_example.services;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vcarrin87.jdbi_example.constants.SqlConstants;
+import com.vcarrin87.jdbi_example.models.Inventory;
 import com.vcarrin87.jdbi_example.models.Products;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +44,8 @@ public class ProductsService {
     public List<Products> getAllProducts() {
         return jdbi.withHandle(handle -> 
             handle.createQuery(SqlConstants.SELECT_ALL_PRODUCTS)
-                  .mapTo(Products.class)
-                  .list()
+                .mapTo(Products.class)
+                .list()
         );
     }
 
@@ -96,6 +98,8 @@ public class ProductsService {
     public List<Products> getProductsInStock() {
         return jdbi.withHandle(handle ->
             handle.createQuery(SqlConstants.SELECT_PRODUCTS_IN_STOCK)
+                  .registerRowMapper(ConstructorMapper.factory(Products.class, "p"))       
+                  .registerRowMapper(ConstructorMapper.factory(Inventory.class, "i")) 
                   .mapTo(Products.class)
                   .list()
         );

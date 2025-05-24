@@ -23,11 +23,20 @@ public interface CustomerWithOrdersDao {
      * @return a stream of JoinRow objects containing customer and order data
      */
     @RegisterJoinRowMapper({Customer.class, Orders.class})
-    @SqlQuery("SELECT c.customer_id as c_customer_id, c.name as c_name, c.email as c_email, c.address as c_address, " +
-            "o.order_id as o_order_id, o.customer_id as o_customer_id, o.order_status as o_order_status " +
-            "FROM customers c " +
-            "JOIN orders o ON c.customer_id = o.customer_id " + 
-            "WHERE c.customer_id = :customerId")
+     @SqlQuery("""      
+        SELECT 
+        c.customer_id c_customer_id, 
+        c.name c_name, 
+        c.email c_email, 
+        c.address c_address, 
+        o.order_id o_order_id, 
+        o.customer_id o_customer_id, 
+        o.order_status o_order_status,
+        o.delivery_date o_delivery_date 
+        FROM customers c 
+        JOIN orders o ON c.customer_id = o.customer_id
+        WHERE c.customer_id = :customerId
+    """)
     @RegisterBeanMapper(value = Customer.class, prefix = "c")
     @RegisterBeanMapper(value = Orders.class, prefix = "o")
     Stream<JoinRow> getCustomerWithOrders(@Bind("customerId") int customerId);

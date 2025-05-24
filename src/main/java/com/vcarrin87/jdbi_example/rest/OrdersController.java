@@ -33,7 +33,7 @@ public class OrdersController {
     }
      */
     @PostMapping("/new-order")
-    public ResponseEntity<?> createOrder(@RequestBody Orders order) {
+    public ResponseEntity<String> createOrder(@RequestBody Orders order) {
         try {
             ordersService.createOrder(order);
             return ResponseEntity.ok("Order created successfully");
@@ -69,7 +69,7 @@ public class OrdersController {
      /orders/1
      */
     @PostMapping("/update-order")
-    public ResponseEntity<?> updateOrder(@RequestBody Orders order) {
+    public ResponseEntity<String> updateOrder(@RequestBody Orders order) {
         try {
             ordersService.updateOrder(order);
             return ResponseEntity.ok("Order updated successfully");
@@ -85,7 +85,7 @@ public class OrdersController {
      /orders/delete-order/1
      */
     @DeleteMapping("/delete-order/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
+    public ResponseEntity<String> deleteOrder(@PathVariable int orderId) {
         try {
             ordersService.deleteOrder(orderId);
             return ResponseEntity.ok("Order deleted successfully");

@@ -59,12 +59,12 @@ public class DatasourceConfig {
                     ? new java.sql.Timestamp(rs.getTimestamp(columnNumber).getTime()) 
                     : null
             )
-            .registerRowMapper(ConstructorMapper.factory(Customer.class, "c"))
-            .registerRowMapper(ConstructorMapper.factory(Products.class, "p"))
-            .registerRowMapper(ConstructorMapper.factory(Payments.class, "pay"))
-            .registerRowMapper(ConstructorMapper.factory(Orders.class, "o"))
-            .registerRowMapper(ConstructorMapper.factory(OrderItems.class, "oi"))
-            .registerRowMapper(ConstructorMapper.factory(Inventory.class, "i"));
+            .registerRowMapper(ConstructorMapper.factory(Customer.class))
+            .registerRowMapper(ConstructorMapper.factory(Products.class))
+            .registerRowMapper(ConstructorMapper.factory(Payments.class))
+            .registerRowMapper(ConstructorMapper.factory(Orders.class))
+            .registerRowMapper(ConstructorMapper.factory(OrderItems.class))
+            .registerRowMapper(ConstructorMapper.factory(Inventory.class));
     }
 
 }

@@ -50,8 +50,13 @@ public class ProductsController {
      /products/1
      */
     @GetMapping("/{id}")
-    public Products getProductById(@PathVariable int id) {
-        return productsService.getProductById(id);
+    public ResponseEntity<Products> getProductById(@PathVariable int id) {
+        Products product = productsService.getProductById(id);
+        if (product != null) {
+            return ResponseEntity.ok(product);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /*
@@ -65,8 +70,13 @@ public class ProductsController {
      }
      */
     @PostMapping("/update-product")
-    public void updateProduct(@RequestBody Products product) {
-        productsService.updateProduct(product);
+    public ResponseEntity<String> updateProduct(@RequestBody Products product) {
+        try {
+           productsService.updateProduct(product);
+           return ResponseEntity.ok("Product updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error updating product: " + e.getMessage());
+        }
     }
     /*
      * This method is used to delete a product by its ID.
@@ -74,7 +84,7 @@ public class ProductsController {
      /products/delete-product/1
      */
     @DeleteMapping("/delete-product/{product_id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable int product_id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable int product_id) {
         try {
             productsService.deleteProduct(product_id);
             return ResponseEntity.ok("Product " + product_id + " deleted successfully");

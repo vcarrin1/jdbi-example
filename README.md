@@ -8,6 +8,26 @@ This project is a demonstration how to use Java with PostgreSQL with JDBI and Li
 
 # Getting Started
 
+## Reducers
+
+Jdbi reducers are a feature that helps you efficiently map SQL query results into complex object graphs, such as a Customer with their Orders and each Order's Payments.
+
+Customer: Has many Orders.
+Order: Has many Payments.
+
+You want to fetch a Customer with all their Orders, and for each Order, all its Payments.
+
+#### How Jdbi Reducers Work
+* Single SQL Query: Write a SQL query that joins customers, orders, and payments.
+* Row Mapping: Each row in the result set contains data for a customer, an order, and a payment.
+* Reducer: Jdbi's reducer collects rows and assembles them into the nested object structure.
+
+## Transactions/Rollbacks
+
+When deleting a Customer that has related orders with payments or an Order that has related payments and order items, we use Jdbi useTransaction, which is used to execute a block of code within a database transaction. If any exception is thrown inside the block, the transaction is rolled back automatically; otherwise, it is committed. 
+* See example: src/main/java/com/vcarrin87/jdbi_example/services/CustomerService.java #deleteCustomer()
+* See example: src/main/java/com/vcarrin87/jdbi_example/services/OrdersService.java #deleteOrders()
+
 ### Swagger-UI
 
 Swagger UI provides a web-based interface to visualize and interact with the API's endpoints.
