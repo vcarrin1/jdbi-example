@@ -56,7 +56,10 @@ public final class SqlConstants {
 
     // ORDER ITEMS
     // Note: The order_items table is assumed to have a foreign key relationship with the orders and the products tables
+    public static final String INSERT_ORDER_ITEM = 
+        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (:order_id, :product_id, :quantity, :price)";
     public static final String DELETE_ORDER_ITEMS_BY_ORDER_ID = "DELETE FROM order_items WHERE order_id = :order_id";
+    public static final String DELETE_ORDER_ITEMS_BY_PRODUCT_ID = "DELETE FROM order_items WHERE product_id = :product_id";
     
     // PAYMENTS
     // Note: The payments table is assumed to have a foreign key relationship with the orders table

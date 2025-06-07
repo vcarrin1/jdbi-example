@@ -87,11 +87,22 @@ public class ProductsService {
      * @param id The ID of the product to delete.
      */
     public void deleteProduct(int id) {
-        jdbi.useHandle(handle -> 
-            handle.createUpdate(SqlConstants.DELETE_PRODUCT)
+        jdbi.useTransaction(handle -> {
+            handle.createUpdate(SqlConstants.DELETE_ORDER_ITEMS_BY_PRODUCT_ID)
                 .bind("product_id", id)
-                .execute()
-        );
+                .execute();
+
+            // Delete the product itself
+            int rowsDeleted = handle.createUpdate(SqlConstants.DELETE_PRODUCT)
+                .bind("product_id", id)
+                .execute();
+
+            if (rowsDeleted == 0) {
+                throw new IllegalStateException("Product not found, rolling back");
+            }
+
+            log.info("Product with ID {} deleted successfully", id);
+        });
     }
 
     /**

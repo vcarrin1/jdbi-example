@@ -24,7 +24,7 @@ You want to fetch a Customer with all their Orders, and for each Order, all its 
 
 ## Transactions/Rollbacks
 
-When deleting a Customer that has related orders with payments or an Order that has related payments and order items, we use Jdbi useTransaction, which is used to execute a block of code within a database transaction. If any exception is thrown inside the block, the transaction is rolled back automatically; otherwise, it is committed. 
+When deleting a Customer that has related orders with payments or an Order that has related payments and order items or Products that has related order items, we use Jdbi useTransaction, which is used to execute a block of code within a database transaction. If any exception is thrown inside the block, the transaction is rolled back automatically; otherwise, it is committed. 
 * See example: src/main/java/com/vcarrin87/jdbi_example/services/CustomerService.java #deleteCustomer()
 * See example: src/main/java/com/vcarrin87/jdbi_example/services/OrdersService.java #deleteOrders()
 
@@ -48,8 +48,13 @@ To access Swagger UI:
     ./mvnw test
 ```
 
-### Run single test
+### Run single test suite
 ```bash
     ./mvnw -Dtest=<Test_Name> test
+```
+
+### Run single test
+```bash
+    ./mvnw -Dtest=<Test_Name>#<method_name> test
 ```
 

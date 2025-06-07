@@ -13,8 +13,8 @@ INSERT INTO orders (customer_id, order_status, delivery_date) VALUES (1, 'SHIPPE
 INSERT INTO orders (customer_id, order_status, delivery_date) VALUES (2, 'PROCESSING', '2024-05-02');
 
 --changeset testuser:insert-order-items context:test
-INSERT INTO order_items (orderitem_id, order_id, product_id, quantity, price) VALUES (1, 1, 1, 2, 19.98);
-INSERT INTO order_items (orderitem_id, order_id, product_id, quantity, price) VALUES (2, 2, 2, 1, 19.99);
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (1, 1, 2, 19.98);
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (2, 2, 1, 19.99);
 
 --changeset testuser:insert-payments context:test
 INSERT INTO payments (order_id, payment_date, amount, payment_method) VALUES (1, '2024-05-01 10:00:00', 19.98, 'CREDIT_CARD');

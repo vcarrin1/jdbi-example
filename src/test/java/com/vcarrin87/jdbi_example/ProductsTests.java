@@ -2,18 +2,22 @@ package com.vcarrin87.jdbi_example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.A;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.vcarrin87.jdbi_example.models.OrderItems;
+import com.vcarrin87.jdbi_example.models.Orders;
 import com.vcarrin87.jdbi_example.models.Products;
+import com.vcarrin87.jdbi_example.services.OrderItemsService;
+import com.vcarrin87.jdbi_example.services.OrdersService;
 import com.vcarrin87.jdbi_example.services.ProductsService;
 
 @SpringBootTest
@@ -22,6 +26,13 @@ public class ProductsTests {
 
     @Autowired
     private ProductsService productsService;
+
+    @Autowired
+    private OrderItemsService orderItemsService;
+
+    @Autowired
+    private OrdersService ordersService;
+    
 
     @Order(1)
     @Test
@@ -57,11 +68,30 @@ public class ProductsTests {
 
         productsService.createProduct(newProduct);
 
+        Orders newOrder = new Orders();
+        newOrder.setCustomerId(1); // Assuming a customer with ID 1 exists
+        newOrder.setOrderStatus("PENDING");
+        newOrder.setDeliveryDate(new Date());
+        ordersService.createOrder(newOrder);
+
         List<Products> products = productsService.getAllProducts();
+
+        System.out.println("Products after creation: " + newProduct);
+        System.out.println("Order after creation: " + newOrder);
+        System.out.println("Products List: " + products);
+        
+        OrderItems orderItem = new OrderItems();
+        orderItem.setProductId(newProduct.getProductId());
+        orderItem.setOrderId(newOrder.getOrderId());
+        orderItem.setQuantity(10);
+        orderItem.setPrice(newProduct.getPrice());
+        orderItemsService.createOrderItem(orderItem);
+
+        System.out.println("Order Items after creation: " + orderItem);
 
         assertEquals(3, products.size());
         assertEquals("New Product", products.get(2).getName());
-        productsService.deleteProduct(newProduct.getProductId());
+        productsService.deleteProduct(newProduct.getProductId()); 
     }
 
     @Order(4)

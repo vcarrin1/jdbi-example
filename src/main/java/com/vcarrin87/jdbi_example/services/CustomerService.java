@@ -100,6 +100,8 @@ public class CustomerService {
             if (rowsDeleted == 0) {
                 throw new IllegalStateException("Customer not found, rolling back");
             }
+
+            log.info("Customer with ID {} deleted successfully", customerId);
         });
     }
 

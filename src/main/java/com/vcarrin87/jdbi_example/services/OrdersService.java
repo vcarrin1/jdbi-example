@@ -96,6 +96,8 @@ public class OrdersService {
             if (rowsDeleted == 0) {
                 throw new IllegalStateException("Order not found, rolling back");
             }
+
+            log.info("Order with ID {} deleted successfully", orderId);
         });
     }
 }
