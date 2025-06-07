@@ -7,8 +7,11 @@ import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.vcarrin87.jdbi_example.constants.SqlConstants;
 import com.vcarrin87.jdbi_example.models.Inventory;
+import com.vcarrin87.jdbi_example.models.OrderItems;
 import com.vcarrin87.jdbi_example.models.Products;
 
 import lombok.extern.slf4j.Slf4j;
@@ -103,5 +106,40 @@ public class ProductsService {
                   .mapTo(Products.class)
                   .list()
         );
+    }
+
+    /**
+     * This method retrieves all products along with their associated order items.
+     * @return List of Products with their order items populated.
+     */
+    public List<Products> getProductsWithOrderItems() {
+
+        Multimap<Products, OrderItems> joined = HashMultimap.create();
+
+        jdbi.useHandle(handle -> 
+            handle.createQuery(SqlConstants.SELECT_PRODUCTS_WITH_ORDER_ITEMS)
+                .registerRowMapper(ConstructorMapper.factory(Products.class, "p"))
+                .registerRowMapper(ConstructorMapper.factory(OrderItems.class, "oi"))
+                .map((rs, ctx) -> {
+                    Products product = ctx.findRowMapperFor(Products.class).orElseThrow().map(rs, ctx);
+                    OrderItems item = ctx.findRowMapperFor(OrderItems.class).orElseThrow().map(rs, ctx);
+                    
+                    if (item != null) {
+                        joined.put(product, item);
+                    }
+                    return product;
+                })
+                .list()
+        );
+
+        // Convert the Multimap to a List of Products with their order items
+        // Each product will have its order items set
+        // This is done by iterating over the keys of the Multimap and setting the order items for each product
+        return joined.keySet().stream()
+            .map(product -> {
+                product.setOrderItems(joined.get(product));
+                return product;
+            })
+            .toList();
     }
 }

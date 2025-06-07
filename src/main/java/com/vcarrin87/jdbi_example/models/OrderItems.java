@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class OrderItems {
     
     @JdbiConstructor
-    public OrderItems(int orderItemId, int orderId, int productId, int quantity, double price) {
+    public OrderItems(int orderItemId, int orderId, int productId, int quantity, Double price) {
         this.orderItemId = orderItemId;
         this.orderId = orderId;
         this.productId = productId;
@@ -26,5 +26,5 @@ public class OrderItems {
 
     private int quantity;
 
-    private double price;
+    private Double price;
 }

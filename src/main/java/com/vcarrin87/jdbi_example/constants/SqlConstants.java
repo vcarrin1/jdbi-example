@@ -30,6 +30,19 @@ public final class SqlConstants {
         "i.stock_level i_stock_level " +
         "FROM products p INNER JOIN inventory i ON p.product_id = i.product_id WHERE i.stock_level > 0";
 
+    public static final String SELECT_PRODUCTS_WITH_ORDER_ITEMS =
+        "SELECT p.product_id p_product_id, " + 
+        "p.name p_name, " +
+        "p.description p_description, " +
+        "p.price p_price, " +
+        "oi.product_id oi_product_id, " +
+        "oi.quantity oi_quantity, " +   
+        "oi.price oi_price, " +
+        "oi.order_id oi_order_id, " +
+        "oi.orderitem_id oi_order_item_id " +
+        "FROM products p " +
+        "LEFT JOIN order_items oi ON p.product_id = oi.product_id";
+
     // ORDERS
     // Note: The orders table is assumed to have a foreign key relationship with the customers, payments and the order_items tables
     public static final String SELECT_ALL_ORDERS = "SELECT * FROM orders";

@@ -15,7 +15,6 @@ import com.google.common.collect.Multimap;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service

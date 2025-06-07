@@ -103,4 +103,13 @@ public class ProductsController {
     public List<Products> getProductsInStock() {
         return productsService.getProductsInStock();
     }
+    /*
+     * This method retrieves all products with their order items.
+     * Example of a GET request:
+     /products/with-order-items
+     */
+    @GetMapping("/with-order-items")
+    public List<Products> getProductsWithOrderItems() {
+        return productsService.getProductsWithOrderItems();
+    }
 }

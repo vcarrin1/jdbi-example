@@ -2,14 +2,17 @@ package com.vcarrin87.jdbi_example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.vcarrin87.jdbi_example.models.OrderItems;
 import com.vcarrin87.jdbi_example.models.Products;
 import com.vcarrin87.jdbi_example.services.ProductsService;
 
@@ -59,5 +62,17 @@ public class ProductsTests {
         assertEquals(3, products.size());
         assertEquals("New Product", products.get(2).getName());
         productsService.deleteProduct(newProduct.getProductId());
+    }
+
+    @Order(4)
+    @Test
+    void testGetProductsWithOrderItems() {
+        List<Products> products = productsService.getProductsWithOrderItems();
+
+        System.out.println("Products with Order Items: " + products);
+
+        assertEquals(2, products.size());
+        assertEquals("Widget", products.get(0).getName());
+        assertEquals("Gadget", products.get(1).getName());
     }
 }
