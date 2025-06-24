@@ -91,5 +91,7 @@ public class PaymentsService {
                 .bind("payment_id", id)
                 .execute()
         );
+
+        log.info("Payment with ID {} deleted successfully.", id);
     }
 }

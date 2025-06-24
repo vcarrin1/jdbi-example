@@ -72,6 +72,14 @@ public final class SqlConstants {
     public static final String DELETE_PAYMENT = "DELETE FROM payments WHERE payment_id = :payment_id";
     public static final String DELETE_PAYMENTS_BY_ORDER_ID = "DELETE FROM payments WHERE order_id = :order_id";
 
+    // INVENTORY
+    public static final String SELECT_ALL_INVENTORY = "SELECT * FROM inventory";
+    public static final String UPDATE_INVENTORY = "UPDATE inventory SET stock_level = stock_level + :delta WHERE product_id = :product_id";
+    public static final String SELECT_INVENTORY_BY_PRODUCT_ID = "SELECT * FROM inventory WHERE product_id = :product_id";
+    public static final String INSERT_INVENTORY = 
+        "INSERT INTO inventory (product_id, stock_level) VALUES (:product_id, :stock_level)";
+    public static final String DELETE_INVENTORY_BY_PRODUCT_ID = "DELETE FROM inventory WHERE product_id = :product_id";
+
     private SqlConstants() {
         // Prevent instantiation
     }

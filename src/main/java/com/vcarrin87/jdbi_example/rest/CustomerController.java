@@ -80,6 +80,15 @@ public class CustomerController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * This method is used to update a customer.
+     * Example of a POST request:
+     {
+        "customerId": 1,
+        "name": "Alice Smith",
+        "email": "
+    }
+     */
     @PostMapping("/update-customer")
     public ResponseEntity<String> updateCustomer(@RequestBody Customer customer) {
         try {
@@ -91,6 +100,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * This method is used to delete a customer by its ID using Transaction.
+     * Example of a DELETE request:
+     /customers/delete-customer/1
+     */
     @DeleteMapping("/delete-customer/{customerId}")  
     public ResponseEntity<String> deleteCustomer(@PathVariable int customerId) {
         try {

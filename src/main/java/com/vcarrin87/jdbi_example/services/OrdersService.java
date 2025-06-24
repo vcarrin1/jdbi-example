@@ -1,5 +1,7 @@
 package com.vcarrin87.jdbi_example.services;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.vcarrin87.jdbi_example.constants.SqlConstants;
 import com.vcarrin87.jdbi_example.models.OrderItems;
 import com.vcarrin87.jdbi_example.models.Orders;
+import com.vcarrin87.jdbi_example.models.Payments;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +20,12 @@ public class OrdersService {
 
     @Autowired
     private Jdbi jdbi;
+
+    @Autowired
+    private InventoryService inventoryService;
+
+    @Autowired
+    private PaymentsService paymentsService;
 
     /*
      * Get all orders
@@ -98,6 +107,51 @@ public class OrdersService {
             }
 
             log.info("Order with ID {} deleted successfully", orderId);
+        });
+    }
+
+    /**
+     * Place an order with order items update inventory and create payment
+     */
+    public void placeOrder(Orders order, List<OrderItems> orderItems) {
+        jdbi.useTransaction(handle -> {
+            // 1. Create the order
+            handle.createUpdate(SqlConstants.INSERT_ORDER)
+                .bind("customer_id", order.getCustomerId())
+                .bind("order_status", order.getOrderStatus())
+                .bind("delivery_date", order.getDeliveryDate())
+                .executeAndReturnGeneratedKeys("order_id")
+                .mapTo(Integer.class)
+                .findFirst()
+                .ifPresent(order::setOrderId);
+
+            double totalAmount = 0;
+            // 2. Insert order items
+            for (OrderItems item : orderItems) {
+                log.info("Processing order item: {}", item);
+                int productId = item.getProductId();
+                int quantity = item.getQuantity();
+                double price = item.getPrice();
+                handle.createUpdate(SqlConstants.INSERT_ORDER_ITEM)
+                    .bind("order_id", order.getOrderId())
+                    .bind("product_id", productId)
+                    .bind("quantity", quantity)
+                    .bind("price", price * quantity)
+                    .execute();
+                totalAmount += price * quantity;
+                // Update inventory
+                inventoryService.updateInventory(productId, -quantity);
+            }
+
+            // Create payment
+            Payments payment = new Payments();
+            payment.setOrderId(order.getOrderId());
+            payment.setAmount(totalAmount);
+            Timestamp paymentDate = new Timestamp(System.currentTimeMillis());
+            payment.setPaymentDate(paymentDate);
+            payment.setPaymentMethod("Credit Card"); // Assuming a default payment method for simplicity
+            log.info("Creating payment for order ID {} with total amount {}", order.getOrderId(), totalAmount);
+            paymentsService.createPayment(payment);
         });
     }
 }
