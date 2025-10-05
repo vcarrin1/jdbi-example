@@ -8,6 +8,12 @@ This project is a demonstration how to use Java with PostgreSQL with JDBI and Li
 
 # Getting Started
 
+## Security
+
+This project uses Spring Security to protect API endpoints and manage authentication. User passwords are securely stored using encryption (BCrypt hashing). Only authenticated users can access protected resources, and sensitive operations require proper authorization. Passwords are never stored in plain text, and all authentication flows leverage secure password hashing to prevent unauthorized access.
+
+BCrypt hashing, a strong password hashing algorithm, generates a unique hash for each password by combining it with a random salt. It is computationally intensive, making brute-force attacks difficult. When a user logs in, the entered password is hashed and compared to the stored hash, ensuring that plain-text passwords are never exposed or stored.
+
 ## Reducers
 
 Jdbi reducers are a feature that helps you efficiently map SQL query results into complex object graphs, such as a Customer with their Orders and each Order's Payments.
